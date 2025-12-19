@@ -1,7 +1,8 @@
 import { GiftBox } from "../models/giftBox";
+import type { Quiz } from "./EasterEgg";
 
 type GiftBoxesProps = {
-  onGiftOpen?: (message?: string, image?: string) => void;
+  onGiftOpen?: (message?: string, image?: string, audio?: string, quiz?: Quiz) => void;
 };
 
 const GIFT_BOXES_DATA = [
@@ -20,8 +21,16 @@ const GIFT_BOXES_DATA = [
     size: 0.4,
     boxColor: "#9370db",
     ribbonColor: "#ff69b4",
-    surpriseMessage: "Ya estas viejita, pero te sigo queriendo",
-    surpriseImage: "/ourHands.jpg"
+    surpriseMessage: "",
+    surpriseQuiz: {
+      question: "¿Cuál es mi cosa favorita de ti?",
+      options: [
+        { text: "Tu sonrisa", isCorrect: false, response: "Tu sonrisa es hermosa, pero hay algo más..." },
+        { text: "Tu forma de ser", isCorrect: true, response: "¡Exacto! Me encanta cómo eres, auténtica y especial 💕" },
+        { text: "Tus ojos", isCorrect: false, response: "Tus ojos son hermosos, pero hay algo más profundo..." },
+        { text: "Todo", isCorrect: false, response: "Casi! Pero si tuviera que elegir una cosa..." },
+      ],
+    },
   },
   {
     position: [-1.8, 0.125, -1.2] as [number, number, number],
@@ -64,7 +73,9 @@ export function GiftBoxes({ onGiftOpen }: GiftBoxesProps) {
           boxColor={gift.boxColor}
           ribbonColor={gift.ribbonColor}
           surpriseMessage={gift.surpriseMessage}
-          surpriseImage={gift.surpriseImage}
+          surpriseImage={(gift as any).surpriseImage}
+          surpriseAudio={(gift as any).surpriseAudio}
+          surpriseQuiz={(gift as any).surpriseQuiz}
           onOpen={onGiftOpen}
         />
       ))}

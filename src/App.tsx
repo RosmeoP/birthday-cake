@@ -19,6 +19,8 @@ import { Fireworks } from "./components/Fireworks";
 import { BirthdayCard } from "./components/BirthdayCard";
 import { EasterEgg } from "./components/EasterEgg";
 import { GiftBoxes } from "./components/GiftBoxes";
+import { AudioPlayer } from "./components/AudioPlayer";
+import { QuizComponent } from "./components/QuizComponent";
 
 import "./App.css";
 
@@ -29,6 +31,8 @@ const lerp = (from: number, to: number, t: number) => from + (to - from) * t;
 
 const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
 
+import type { Quiz } from "./components/EasterEgg";
+
 type AnimatedSceneProps = {
   isPlaying: boolean;
   onBackgroundFadeChange?: (opacity: number) => void;
@@ -38,8 +42,8 @@ type AnimatedSceneProps = {
   cards: ReadonlyArray<BirthdayCardConfig>;
   activeCardId: string | null;
   onToggleCard: (id: string) => void;
-  onEasterEggDiscovered?: (message: string) => void;
-  onGiftOpen?: (message?: string, image?: string) => void;
+  onEasterEggDiscovered?: (message: string, image?: string, audio?: string, quiz?: Quiz) => void;
+  onGiftOpen?: (message?: string, image?: string, audio?: string, quiz?: Quiz) => void;
   showEasterEggs: boolean;
 };
 
@@ -365,12 +369,22 @@ function AnimatedScene({
             position={[2.5, 0.3, -1.5]}
             hiddenObjectType="star"
             secretMessage="⭐ Cada día contigo es mágico"
+            secretImage="/beachPicture.jpg"
             onDiscovered={onEasterEggDiscovered}
           />
           <EasterEgg
             position={[1.8, 0.4, 2.8]}
             hiddenObjectType="gift"
             secretMessage="🎁 Eres el mejor regalo"
+            secretQuiz={{
+              question: "¿Cuándo fue nuestra primera cita?",
+              options: [
+                { text: "Agosto 2024", isCorrect: false, response: "¡Casi! Pero fue un poco más tarde..." },
+                { text: "Septiembre 2024", isCorrect: true, response: "¡Correcto! 3 de Septiembre, el día que cambió todo 💕" },
+                { text: "Octubre 2024", isCorrect: false, response: "No tan tarde... fue antes!" },
+                { text: "Julio 2024", isCorrect: false, response: "Fue un poco después de ese mes..." },
+              ],
+            }}
             onDiscovered={onEasterEggDiscovered}
           />
           <EasterEgg
@@ -461,9 +475,14 @@ export default function App() {
   const [discoveredMessages, setDiscoveredMessages] = useState<string[]>([]);
   const [showEasterEggMessage, setShowEasterEggMessage] = useState(false);
   const [currentEasterEggMessage, setCurrentEasterEggMessage] = useState("");
+  const [currentEasterEggImage, setCurrentEasterEggImage] = useState<string | null>(null);
+  const [currentEasterEggAudio, setCurrentEasterEggAudio] = useState<string | null>(null);
+  const [currentEasterEggQuiz, setCurrentEasterEggQuiz] = useState<Quiz | null>(null);
   const [showGiftMessage, setShowGiftMessage] = useState(false);
   const [currentGiftMessage, setCurrentGiftMessage] = useState("");
   const [currentGiftImage, setCurrentGiftImage] = useState<string | null>(null);
+  const [currentGiftAudio, setCurrentGiftAudio] = useState<string | null>(null);
+  const [currentGiftQuiz, setCurrentGiftQuiz] = useState<Quiz | null>(null);
   const backgroundAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -597,31 +616,48 @@ export default function App() {
     setActiveCardId((current) => (current === id ? null : id));
   }, []);
 
-  const handleEasterEggDiscovered = useCallback((message: string) => {
+  const handleEasterEggDiscovered = useCallback((message: string, image?: string, audio?: string, quiz?: Quiz) => {
     setDiscoveredMessages((prev) => [...prev, message]);
     setCurrentEasterEggMessage(message);
+    setCurrentEasterEggImage(image || null);
+    setCurrentEasterEggAudio(audio || null);
+    setCurrentEasterEggQuiz(quiz || null);
     setShowEasterEggMessage(true);
     
-    // Auto-hide after 4 seconds
+    // Auto-hide after longer if quiz, else 4 seconds
+    const hideDelay = quiz ? 30000 : 4000;
     setTimeout(() => {
       setShowEasterEggMessage(false);
-    }, 4000);
+      setCurrentEasterEggImage(null);
+      setCurrentEasterEggAudio(null);
+      setCurrentEasterEggQuiz(null);
+    }, hideDelay);
   }, []);
 
-  const handleGiftOpen = useCallback((message?: string, image?: string) => {
+  const handleGiftOpen = useCallback((message?: string, image?: string, audio?: string, quiz?: Quiz) => {
     if (message) {
       setCurrentGiftMessage(message);
     }
     if (image) {
       setCurrentGiftImage(image);
     }
+    if (audio) {
+      setCurrentGiftAudio(audio);
+    }
+    if (quiz) {
+      setCurrentGiftQuiz(quiz);
+    }
     setShowGiftMessage(true);
     
-    // Auto-hide after 5 seconds
+    // Auto-hide after longer if quiz, else 5 seconds
+    const hideDelay = quiz ? 30000 : 5000;
     setTimeout(() => {
       setShowGiftMessage(false);
+      setCurrentGiftMessage("");
       setCurrentGiftImage(null);
-    }, 5000);
+      setCurrentGiftAudio(null);
+      setCurrentGiftQuiz(null);
+    }, hideDelay);
   }, []);
 
   const isScenePlaying = hasStarted && sceneStarted;
@@ -657,7 +693,8 @@ export default function App() {
       {showGiftMessage && (
         <div className="gift-message-popup">
           <div className="gift-message-content">
-            🎁 ¡Abriste un regalo! 🎁
+            {!currentGiftQuiz && !currentGiftAudio && "🎁 ¡Abriste un regalo! 🎁"}
+            {currentGiftAudio && <AudioPlayer audioSrc={currentGiftAudio} />}
             {currentGiftImage && (
               <div className="gift-image">
                 <img src={currentGiftImage} alt="Surprise" />
@@ -666,14 +703,32 @@ export default function App() {
             {currentGiftMessage && (
               <div className="gift-message-text">{currentGiftMessage}</div>
             )}
+            {currentGiftQuiz && <QuizComponent quiz={currentGiftQuiz} />}
           </div>
         </div>
       )}
       {showEasterEggMessage && (
         <div className="easter-egg-message">
           <div className="easter-egg-content">
-            🎉 ¡Descubriste un secreto! 🎉
-            <div className="easter-egg-text">{currentEasterEggMessage}</div>
+            {currentEasterEggImage || currentEasterEggAudio || currentEasterEggQuiz ? (
+              <>
+                {currentEasterEggAudio && <AudioPlayer audioSrc={currentEasterEggAudio} />}
+                {currentEasterEggImage && (
+                  <div className="gift-image">
+                    <img src={currentEasterEggImage} alt="Easter egg" />
+                  </div>
+                )}
+                {currentEasterEggMessage && (
+                  <div className="gift-message-text">{currentEasterEggMessage}</div>
+                )}
+                {currentEasterEggQuiz && <QuizComponent quiz={currentEasterEggQuiz} />}
+              </>
+            ) : (
+              <>
+                🎉 ¡Descubriste un secreto! 🎉
+                <div className="easter-egg-text">{currentEasterEggMessage}</div>
+              </>
+            )}
           </div>
         </div>
       )}

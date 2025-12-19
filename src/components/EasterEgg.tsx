@@ -4,17 +4,34 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { Group, MeshStandardMaterial, Vector3 } from "three";
 import type { Mesh } from "three";
 
+export type QuizOption = {
+  text: string;
+  isCorrect: boolean;
+  response?: string;
+};
+
+export type Quiz = {
+  question: string;
+  options: QuizOption[];
+};
+
 type EasterEggProps = {
   position: [number, number, number];
   hiddenObjectType: "heart" | "star" | "gift" | "butterfly";
   secretMessage: string;
-  onDiscovered?: (message: string) => void;
+  secretImage?: string;
+  secretAudio?: string;
+  secretQuiz?: Quiz;
+  onDiscovered?: (message: string, image?: string, audio?: string, quiz?: Quiz) => void;
 };
 
 export function EasterEgg({
   position,
   hiddenObjectType,
   secretMessage,
+  secretImage,
+  secretAudio,
+  secretQuiz,
   onDiscovered,
 }: EasterEggProps) {
   const groupRef = useRef<Group>(null);
@@ -71,10 +88,10 @@ export function EasterEgg({
       event.stopPropagation();
       if (!isDiscovered) {
         setIsDiscovered(true);
-        onDiscovered?.(secretMessage);
+        onDiscovered?.(secretMessage, secretImage, secretAudio, secretQuiz);
       }
     },
-    [isDiscovered, secretMessage, onDiscovered]
+    [isDiscovered, secretMessage, secretImage, secretAudio, secretQuiz, onDiscovered]
   );
 
   const handlePointerOver = useCallback((event: ThreeEvent<PointerEvent>) => {

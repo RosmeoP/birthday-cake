@@ -3,6 +3,7 @@ import type { ThreeElements } from "@react-three/fiber";
 import { useCallback, useRef, useState } from "react";
 import type { Group } from "three";
 import { useCursor } from "@react-three/drei";
+import type { Quiz } from "../components/EasterEgg";
 
 type GiftBoxProps = ThreeElements["group"] & {
   boxColor?: string;
@@ -11,7 +12,9 @@ type GiftBoxProps = ThreeElements["group"] & {
   floatAnimation?: boolean;
   surpriseMessage?: string;
   surpriseImage?: string;
-  onOpen?: (message?: string, image?: string) => void;
+  surpriseAudio?: string;
+  surpriseQuiz?: Quiz;
+  onOpen?: (message?: string, image?: string, audio?: string, quiz?: Quiz) => void;
 };
 
 export function GiftBox({
@@ -21,6 +24,8 @@ export function GiftBox({
   floatAnimation = false,
   surpriseMessage,
   surpriseImage,
+  surpriseAudio,
+  surpriseQuiz,
   onOpen,
   ...groupProps
 }: GiftBoxProps) {
@@ -56,9 +61,9 @@ export function GiftBox({
     (event: ThreeEvent<MouseEvent>) => {
       event.stopPropagation();
       setIsOpen(true);
-      onOpen?.(surpriseMessage, surpriseImage);
+      onOpen?.(surpriseMessage, surpriseImage, surpriseAudio, surpriseQuiz);
     },
-    [onOpen, surpriseMessage, surpriseImage]
+    [onOpen, surpriseMessage, surpriseImage, surpriseAudio, surpriseQuiz]
   );
 
   const handlePointerOver = useCallback((event: ThreeEvent<PointerEvent>) => {
