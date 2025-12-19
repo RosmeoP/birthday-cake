@@ -383,10 +383,10 @@ function AnimatedScene({
             secretQuiz={{
               question: "¿Cuándo fue nuestra primera cita?",
               options: [
-                { text: "Agosto 2024", isCorrect: false, response: "¡Casi! Pero fue un poco más tarde..." },
-                { text: "Septiembre 2024", isCorrect: true, response: "¡Correcto! 3 de Septiembre, el día que cambió todo 💕" },
-                { text: "Octubre 2024", isCorrect: false, response: "No tan tarde... fue antes!" },
-                { text: "Julio 2024", isCorrect: false, response: "Fue un poco después de ese mes..." },
+                { text: "17 de Septiembre", isCorrect: false, response: "¡Casi! Pero fue un poco más tarde..." },
+                { text: "13 de Septiembre", isCorrect: true, response: "¡Correcto! 13 de Septiembre" },
+                { text: "4 de Octubre", isCorrect: false, response: "No tan tarde... fue antes!" },
+                { text: "9 de Septiembre", isCorrect: false, response: "Fue un poco después..." },
               ],
             }}
             onDiscovered={onEasterEggDiscovered}
