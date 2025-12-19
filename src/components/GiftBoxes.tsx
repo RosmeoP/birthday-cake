@@ -12,7 +12,7 @@ const GIFT_BOXES_DATA = [
     boxColor: "#ff1493",
     ribbonColor: "#ffd700",
     surpriseMessage: "Espero que cumplas todo lo que te propongas",
-    surpriseImage: "/diannePequeña.jpg", // Add image path like: "/gift1.jpg"
+    surpriseImage: "/diannePequeña.jpg",
   },
   {
     position: [2.3, 0.2, -0.8] as [number, number, number],
@@ -21,7 +21,7 @@ const GIFT_BOXES_DATA = [
     boxColor: "#9370db",
     ribbonColor: "#ff69b4",
     surpriseMessage: "Ya estas viejita, pero te sigo queriendo",
-    surpriseImage: "/ourHands.jpg" // Direct path to public folder
+    surpriseImage: "/ourHands.jpg"
   },
   {
     position: [-1.8, 0.125, -1.2] as [number, number, number],
@@ -30,7 +30,7 @@ const GIFT_BOXES_DATA = [
     boxColor: "#00ced1",
     ribbonColor: "#ffa500",
     surpriseMessage: "El 3 de Septiembre comenzamos a hacer historia",
-    surpriseImage: "/flowers.jpg", // Add image path like: "/gift3.jpg"
+    surpriseImage: "/flowers.jpg",
   },
   {
     position: [1.9, 0.175, 1.5] as [number, number, number],
@@ -39,7 +39,7 @@ const GIFT_BOXES_DATA = [
     boxColor: "#ff6347",
     ribbonColor: "#32cd32",
     surpriseMessage: "Te quiero mucho, aunque no te bañes",
-    surpriseImage: "/familyPicture.jpg", // Add image path like: "/gift4.jpg"
+    surpriseImage: "/familyPicture.jpg",
   },
   {
     position: [-2.5, 0.1, 1.8] as [number, number, number],
@@ -48,7 +48,7 @@ const GIFT_BOXES_DATA = [
     boxColor: "#ff69b4",
     ribbonColor: "#ffff00",
     surpriseMessage: "Gracias por ser parte de mi vida",
-    surpriseImage: "/together.jpg", // Add image path like: "/gift5.jpg"
+    surpriseImage: "/together.jpg", 
   },
 ];
 
