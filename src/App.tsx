@@ -359,19 +359,23 @@ function AnimatedScene({
       {/* Hidden interactive elements */}
       {showEasterEggs && (
         <>
+          {/* Heart - Floating high above left side (with audio) - more challenging! */}
           <EasterEgg
-            position={[-2.5, 0.5, 1]}
+            position={[-2, 2.5, 1]}
             hiddenObjectType="heart"
-            secretMessage="💖 Eres increíble y especial"
+            secretMessage="💖 Escucha este mensaje especial"
+            secretAudio="/birthdayMessage.mp3"
             onDiscovered={onEasterEggDiscovered}
           />
+          {/* Star - Right side, more visible (with beach picture) */}
           <EasterEgg
-            position={[2.5, 0.3, -1.5]}
+            position={[2.8, 0.5, 0]}
             hiddenObjectType="star"
             secretMessage="⭐ Cada día contigo es mágico"
             secretImage="/beachPicture.jpg"
             onDiscovered={onEasterEggDiscovered}
           />
+          {/* Gift - Right front area (with quiz) */}
           <EasterEgg
             position={[1.8, 0.4, 2.8]}
             hiddenObjectType="gift"
@@ -387,14 +391,16 @@ function AnimatedScene({
             }}
             onDiscovered={onEasterEggDiscovered}
           />
+          {/* Butterfly - Left back area */}
           <EasterEgg
             position={[-2, 0.6, -2.5]}
             hiddenObjectType="butterfly"
             secretMessage="🦋 Haces que mi corazón vuele"
             onDiscovered={onEasterEggDiscovered}
           />
+          {/* Heart - Floating above table center-front */}
           <EasterEgg
-            position={[0, 2.5, 3.5]}
+            position={[0, 1.2, 2.5]}
             hiddenObjectType="heart"
             secretMessage="💝 Feliz cumpleaños mi amor"
             onDiscovered={onEasterEggDiscovered}

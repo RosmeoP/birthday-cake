@@ -101,7 +101,7 @@ canvas {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 
               0 1px 3px rgba(0, 0, 0, 0.2);
   z-index: 100;
-  pointer-events: none;
+  pointer-events: auto;
   animation: easterEggPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   max-width: min(500px, 90vw);
   max-height: 90vh;
@@ -181,7 +181,7 @@ canvas {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 
               0 1px 3px rgba(0, 0, 0, 0.2);
   z-index: 100;
-  pointer-events: none;
+  pointer-events: auto;
   animation: giftBoxBounce 0.5s ease-out;
   max-width: min(500px, 90vw);
   max-height: 90vh;
