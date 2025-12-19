@@ -363,7 +363,7 @@ function AnimatedScene({
           <EasterEgg
             position={[-2, 2.5, 1]}
             hiddenObjectType="heart"
-            secretMessage="Escucha este mensaje especial"
+            secretMessage="Escucha esta canción"
             secretAudio="/birthdayMessage.mp3"
             onDiscovered={onEasterEggDiscovered}
           />
@@ -371,7 +371,7 @@ function AnimatedScene({
           <EasterEgg
             position={[2.8, 0.5, 0]}
             hiddenObjectType="star"
-            secretMessage="Cada día contigo es mágico"
+            secretMessage=""
             secretImage="/beachPicture.jpg"
             onDiscovered={onEasterEggDiscovered}
           />
