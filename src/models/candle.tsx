@@ -162,13 +162,36 @@ export function Candle({ children, isLit = true, ...groupProps }: CandleProps) {
     return null;
   }
 
+  const currentStrength = flameUniforms.strength.value;
+
   return (
     <group {...groupProps}>
       <primitive object={candleScene} />
+      {/* Main flame */}
       <mesh ref={flameMeshRef} scale={0.4} position={[0, 2.9, 0]} material={flameMaterial}>
         <sphereGeometry args={[0.5, 32, 32]} />
       </mesh>
-      <pointLight ref={lightRef} distance={5} color="#ffffffff" decay={1} />
+      {/* Inner bright core */}
+      <mesh scale={0.25} position={[0, 2.85, 0]} visible={currentStrength > 0.02}>
+        <sphereGeometry args={[0.5, 16, 16]} />
+        <meshBasicMaterial color="#ffffaa" transparent opacity={0.9} />
+      </mesh>
+      {/* Glow halo */}
+      <mesh scale={0.6} position={[0, 2.95, 0]} visible={currentStrength > 0.02}>
+        <sphereGeometry args={[0.5, 16, 16]} />
+        <meshBasicMaterial color="#ff8800" transparent opacity={0.15} />
+      </mesh>
+      {/* Main point light */}
+      <pointLight ref={lightRef} distance={8} color="#ffaa44" decay={2} />
+      {/* Additional warm ambient glow */}
+      <pointLight position={[0, 3, 0]} distance={4} color="#ff6600" decay={2} intensity={currentStrength * 0.5} />
+      {/* Sparkles/particles effect */}
+      {isLit && (
+        <>
+          <pointLight position={[0.1, 3.2, 0]} distance={1} color="#ffffff" decay={2} intensity={currentStrength * 0.3} />
+          <pointLight position={[-0.1, 3.1, 0.1]} distance={1} color="#ffdd88" decay={2} intensity={currentStrength * 0.25} />
+        </>
+      )}
       {children}
     </group>
   );

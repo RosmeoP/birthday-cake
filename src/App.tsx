@@ -17,6 +17,7 @@ import { Table } from "./models/table";
 import { PictureFrame } from "./models/pictureFrame";
 import { Fireworks } from "./components/Fireworks";
 import { BirthdayCard } from "./components/BirthdayCard";
+import { EasterEgg } from "./components/EasterEgg";
 
 import "./App.css";
 
@@ -36,6 +37,7 @@ type AnimatedSceneProps = {
   cards: ReadonlyArray<BirthdayCardConfig>;
   activeCardId: string | null;
   onToggleCard: (id: string) => void;
+  onEasterEggDiscovered?: (message: string) => void;
 };
 
 const CAKE_START_Y = 10;
@@ -117,6 +119,7 @@ function AnimatedScene({
   cards,
   activeCardId,
   onToggleCard,
+  onEasterEggDiscovered,
 }: AnimatedSceneProps) {
   const cakeGroup = useRef<Group>(null);
   const tableGroup = useRef<Group>(null);
@@ -310,6 +313,37 @@ function AnimatedScene({
       <group ref={candleGroup}>
         <Candle isLit={candleLit} scale={0.25} position={[0, 1.1, 0]} />
       </group>
+      {/* Easter Eggs - Hidden throughout the scene */}
+      <EasterEgg
+        position={[-2.5, 0.5, 1]}
+        hiddenObjectType="heart"
+        secretMessage="💖 Eres increíble y especial"
+        onDiscovered={onEasterEggDiscovered}
+      />
+      <EasterEgg
+        position={[2.5, 0.3, -1.5]}
+        hiddenObjectType="star"
+        secretMessage="⭐ Cada día contigo es mágico"
+        onDiscovered={onEasterEggDiscovered}
+      />
+      <EasterEgg
+        position={[1.8, 0.4, 2.8]}
+        hiddenObjectType="gift"
+        secretMessage="🎁 Eres el mejor regalo"
+        onDiscovered={onEasterEggDiscovered}
+      />
+      <EasterEgg
+        position={[-2, 0.6, -2.5]}
+        hiddenObjectType="butterfly"
+        secretMessage="🦋 Haces que mi corazón vuele"
+        onDiscovered={onEasterEggDiscovered}
+      />
+      <EasterEgg
+        position={[0, 2.5, 3.5]}
+        hiddenObjectType="heart"
+        secretMessage="💝 Feliz cumpleaños mi amor"
+        onDiscovered={onEasterEggDiscovered}
+      />
     </>
   );
 }
@@ -381,6 +415,9 @@ export default function App() {
   const [isCandleLit, setIsCandleLit] = useState(true);
   const [fireworksActive, setFireworksActive] = useState(false);
   const [activeCardId, setActiveCardId] = useState<string | null>(null);
+  const [discoveredMessages, setDiscoveredMessages] = useState<string[]>([]);
+  const [showEasterEggMessage, setShowEasterEggMessage] = useState(false);
+  const [currentEasterEggMessage, setCurrentEasterEggMessage] = useState("");
   const backgroundAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -514,6 +551,17 @@ export default function App() {
     setActiveCardId((current) => (current === id ? null : id));
   }, []);
 
+  const handleEasterEggDiscovered = useCallback((message: string) => {
+    setDiscoveredMessages((prev) => [...prev, message]);
+    setCurrentEasterEggMessage(message);
+    setShowEasterEggMessage(true);
+    
+    // Auto-hide after 4 seconds
+    setTimeout(() => {
+      setShowEasterEggMessage(false);
+    }, 4000);
+  }, []);
+
   const isScenePlaying = hasStarted && sceneStarted;
 
   return (
@@ -544,6 +592,19 @@ export default function App() {
       {hasAnimationCompleted && isCandleLit && (
         <div className="hint-overlay">Presiona space para apagar la vela</div>
       )}
+      {showEasterEggMessage && (
+        <div className="easter-egg-message">
+          <div className="easter-egg-content">
+            🎉 ¡Descubriste un secreto! 🎉
+            <div className="easter-egg-text">{currentEasterEggMessage}</div>
+          </div>
+        </div>
+      )}
+      {discoveredMessages.length > 0 && (
+        <div className="easter-egg-counter">
+          🔍 Secretos encontrados: {discoveredMessages.length}/5
+        </div>
+      )}
       <Canvas
         gl={{ alpha: true }}
         style={{ background: "transparent" }}
@@ -561,16 +622,17 @@ export default function App() {
             cards={BIRTHDAY_CARDS}
             activeCardId={activeCardId}
             onToggleCard={handleCardToggle}
+            onEasterEggDiscovered={handleEasterEggDiscovered}
           />
           <ambientLight intensity={(1 - environmentProgress) * 0.8} />
           <directionalLight intensity={0.5} position={[2, 10, 0]} color={[1, 0.9, 0.95]}/>
           <Environment
-            files={["/shanghai_bund_4k.hdr"]}
+            files={["/Limpopo_4K.hdr"]}
             backgroundRotation={[0, 3.3, 0]}
             environmentRotation={[0, 3.3, 0]}
             background
-            environmentIntensity={0.1 * environmentProgress}
-            backgroundIntensity={0.05 * environmentProgress}
+            environmentIntensity={0.8 * environmentProgress}
+            backgroundIntensity={0.5 * environmentProgress}
           />
           <EnvironmentBackgroundController intensity={0.05 * environmentProgress} />
           <Fireworks isActive={fireworksActive} origin={[0, 10, 0]} />
