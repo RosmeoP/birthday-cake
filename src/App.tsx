@@ -363,7 +363,7 @@ function AnimatedScene({
           <EasterEgg
             position={[-2, 2.5, 1]}
             hiddenObjectType="heart"
-            secretMessage="💖 Escucha este mensaje especial"
+            secretMessage="Escucha este mensaje especial"
             secretAudio="/birthdayMessage.mp3"
             onDiscovered={onEasterEggDiscovered}
           />
@@ -371,15 +371,15 @@ function AnimatedScene({
           <EasterEgg
             position={[2.8, 0.5, 0]}
             hiddenObjectType="star"
-            secretMessage="⭐ Cada día contigo es mágico"
+            secretMessage="Cada día contigo es mágico"
             secretImage="/beachPicture.jpg"
             onDiscovered={onEasterEggDiscovered}
           />
-          {/* Gift - Right front area (with quiz) */}
+          {/* Gift - Hidden behind cake, lower (with quiz) */}
           <EasterEgg
-            position={[1.8, 0.4, 2.8]}
+            position={[0, 0.3, -1.5]}
             hiddenObjectType="gift"
-            secretMessage="🎁 Eres el mejor regalo"
+            secretMessage="Eres el mejor regalo"
             secretQuiz={{
               question: "¿Cuándo fue nuestra primera cita?",
               options: [
@@ -395,14 +395,14 @@ function AnimatedScene({
           <EasterEgg
             position={[-2, 0.6, -2.5]}
             hiddenObjectType="butterfly"
-            secretMessage="🦋 Haces que mi corazón vuele"
+            secretMessage="Haces que mi corazón vuele"
             onDiscovered={onEasterEggDiscovered}
           />
-          {/* Heart - Floating above table center-front */}
+          {/* Heart - Hidden under the table edge back-left */}
           <EasterEgg
-            position={[0, 1.2, 2.5]}
+            position={[-2.8, 0.2, -3]}
             hiddenObjectType="heart"
-            secretMessage="💝 Feliz cumpleaños mi amor"
+            secretMessage="Feliz cumpleaños mi amor"
             onDiscovered={onEasterEggDiscovered}
           />
         </>
@@ -623,21 +623,18 @@ export default function App() {
   }, []);
 
   const handleEasterEggDiscovered = useCallback((message: string, image?: string, audio?: string, quiz?: Quiz) => {
-    setDiscoveredMessages((prev) => [...prev, message]);
+    setDiscoveredMessages((prev) => {
+      // Only add if not already discovered
+      if (!prev.includes(message)) {
+        return [...prev, message];
+      }
+      return prev;
+    });
     setCurrentEasterEggMessage(message);
     setCurrentEasterEggImage(image || null);
     setCurrentEasterEggAudio(audio || null);
     setCurrentEasterEggQuiz(quiz || null);
     setShowEasterEggMessage(true);
-    
-    // Auto-hide after longer if quiz, else 4 seconds
-    const hideDelay = quiz ? 30000 : 4000;
-    setTimeout(() => {
-      setShowEasterEggMessage(false);
-      setCurrentEasterEggImage(null);
-      setCurrentEasterEggAudio(null);
-      setCurrentEasterEggQuiz(null);
-    }, hideDelay);
   }, []);
 
   const handleGiftOpen = useCallback((message?: string, image?: string, audio?: string, quiz?: Quiz) => {
@@ -654,16 +651,6 @@ export default function App() {
       setCurrentGiftQuiz(quiz);
     }
     setShowGiftMessage(true);
-    
-    // Auto-hide after longer if quiz, else 5 seconds
-    const hideDelay = quiz ? 30000 : 5000;
-    setTimeout(() => {
-      setShowGiftMessage(false);
-      setCurrentGiftMessage("");
-      setCurrentGiftImage(null);
-      setCurrentGiftAudio(null);
-      setCurrentGiftQuiz(null);
-    }, hideDelay);
   }, []);
 
   const isScenePlaying = hasStarted && sceneStarted;
@@ -698,8 +685,15 @@ export default function App() {
       )}
       {showGiftMessage && (
         <div className="gift-message-popup">
+          <button 
+            className="close-button" 
+            onClick={() => setShowGiftMessage(false)}
+            type="button"
+          >
+            ✕
+          </button>
           <div className="gift-message-content">
-            {!currentGiftQuiz && !currentGiftAudio && "🎁 ¡Abriste un regalo! 🎁"}
+            {!currentGiftQuiz && !currentGiftAudio && "¡Abriste un regalo!"}
             {currentGiftAudio && <AudioPlayer audioSrc={currentGiftAudio} />}
             {currentGiftImage && (
               <div className="gift-image">
@@ -715,6 +709,13 @@ export default function App() {
       )}
       {showEasterEggMessage && (
         <div className="easter-egg-message">
+          <button 
+            className="close-button" 
+            onClick={() => setShowEasterEggMessage(false)}
+            type="button"
+          >
+            ✕
+          </button>
           <div className="easter-egg-content">
             {currentEasterEggImage || currentEasterEggAudio || currentEasterEggQuiz ? (
               <>
@@ -731,7 +732,7 @@ export default function App() {
               </>
             ) : (
               <>
-                🎉 ¡Descubriste un secreto! 🎉
+                ¡Descubriste un secreto!
                 <div className="easter-egg-text">{currentEasterEggMessage}</div>
               </>
             )}
@@ -740,7 +741,7 @@ export default function App() {
       )}
       {discoveredMessages.length > 0 && (
         <div className="easter-egg-counter">
-          🔍 Secretos encontrados: {discoveredMessages.length}/5
+          Secretos encontrados: {discoveredMessages.length}/5
         </div>
       )}
       <Canvas

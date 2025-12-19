@@ -21,16 +21,8 @@ const GIFT_BOXES_DATA = [
     size: 0.4,
     boxColor: "#9370db",
     ribbonColor: "#ff69b4",
-    surpriseMessage: "",
-    surpriseQuiz: {
-      question: "¿Cuál es mi cosa favorita de ti?",
-      options: [
-        { text: "Tu sonrisa", isCorrect: false, response: "Tu sonrisa es hermosa, pero hay algo más..." },
-        { text: "Tu forma de ser", isCorrect: true, response: "¡Exacto! Me encanta cómo eres, auténtica y especial 💕" },
-        { text: "Tus ojos", isCorrect: false, response: "Tus ojos son hermosos, pero hay algo más profundo..." },
-        { text: "Todo", isCorrect: false, response: "Casi! Pero si tuviera que elegir una cosa..." },
-      ],
-    },
+    surpriseMessage: "Ya estas viejita, pero te sigo queriendo",
+    surpriseImage: "/ourHands.jpg",
   },
   {
     position: [-1.8, 0.125, -1.2] as [number, number, number],
