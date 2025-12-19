@@ -18,6 +18,7 @@ import { PictureFrame } from "./models/pictureFrame";
 import { Fireworks } from "./components/Fireworks";
 import { BirthdayCard } from "./components/BirthdayCard";
 import { EasterEgg } from "./components/EasterEgg";
+import { GiftBoxes } from "./components/GiftBoxes";
 
 import "./App.css";
 
@@ -38,6 +39,7 @@ type AnimatedSceneProps = {
   activeCardId: string | null;
   onToggleCard: (id: string) => void;
   onEasterEggDiscovered?: (message: string) => void;
+  onGiftOpen?: (message?: string, image?: string) => void;
   showEasterEggs: boolean;
 };
 
@@ -121,6 +123,7 @@ function AnimatedScene({
   activeCardId,
   onToggleCard,
   onEasterEggDiscovered,
+  onGiftOpen,
   showEasterEggs,
 }: AnimatedSceneProps) {
   const cakeGroup = useRef<Group>(null);
@@ -297,6 +300,8 @@ function AnimatedScene({
           rotation={[0, 4.2, 0]}
           scale={0.75}
         />
+        {/* Gift boxes decorations */}
+        <GiftBoxes onGiftOpen={onGiftOpen} />
         {cards.map((card) => (
           <BirthdayCard
             key={card.id}
@@ -424,6 +429,9 @@ export default function App() {
   const [discoveredMessages, setDiscoveredMessages] = useState<string[]>([]);
   const [showEasterEggMessage, setShowEasterEggMessage] = useState(false);
   const [currentEasterEggMessage, setCurrentEasterEggMessage] = useState("");
+  const [showGiftMessage, setShowGiftMessage] = useState(false);
+  const [currentGiftMessage, setCurrentGiftMessage] = useState("");
+  const [currentGiftImage, setCurrentGiftImage] = useState<string | null>(null);
   const backgroundAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -568,6 +576,22 @@ export default function App() {
     }, 4000);
   }, []);
 
+  const handleGiftOpen = useCallback((message?: string, image?: string) => {
+    if (message) {
+      setCurrentGiftMessage(message);
+    }
+    if (image) {
+      setCurrentGiftImage(image);
+    }
+    setShowGiftMessage(true);
+    
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+      setShowGiftMessage(false);
+      setCurrentGiftImage(null);
+    }, 5000);
+  }, []);
+
   const isScenePlaying = hasStarted && sceneStarted;
 
   return (
@@ -597,6 +621,21 @@ export default function App() {
       </div>
       {hasAnimationCompleted && isCandleLit && (
         <div className="hint-overlay">Presiona space para apagar la vela</div>
+      )}
+      {showGiftMessage && (
+        <div className="gift-message-popup">
+          <div className="gift-message-content">
+            🎁 ¡Abriste un regalo! 🎁
+            {currentGiftImage && (
+              <div className="gift-image">
+                <img src={currentGiftImage} alt="Surprise" />
+              </div>
+            )}
+            {currentGiftMessage && (
+              <div className="gift-message-text">{currentGiftMessage}</div>
+            )}
+          </div>
+        </div>
       )}
       {showEasterEggMessage && (
         <div className="easter-egg-message">
@@ -629,6 +668,7 @@ export default function App() {
             activeCardId={activeCardId}
             onToggleCard={handleCardToggle}
             onEasterEggDiscovered={handleEasterEggDiscovered}
+            onGiftOpen={handleGiftOpen}
             showEasterEggs={hasAnimationCompleted}
           />
           <ambientLight intensity={(1 - environmentProgress) * 0.8} />
