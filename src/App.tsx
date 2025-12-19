@@ -38,6 +38,7 @@ type AnimatedSceneProps = {
   activeCardId: string | null;
   onToggleCard: (id: string) => void;
   onEasterEggDiscovered?: (message: string) => void;
+  showEasterEggs: boolean;
 };
 
 const CAKE_START_Y = 10;
@@ -120,6 +121,7 @@ function AnimatedScene({
   activeCardId,
   onToggleCard,
   onEasterEggDiscovered,
+  showEasterEggs,
 }: AnimatedSceneProps) {
   const cakeGroup = useRef<Group>(null);
   const tableGroup = useRef<Group>(null);
@@ -313,37 +315,41 @@ function AnimatedScene({
       <group ref={candleGroup}>
         <Candle isLit={candleLit} scale={0.25} position={[0, 1.1, 0]} />
       </group>
-      {/* Easter Eggs - Hidden throughout the scene */}
-      <EasterEgg
-        position={[-2.5, 0.5, 1]}
-        hiddenObjectType="heart"
-        secretMessage="💖 Eres increíble y especial"
-        onDiscovered={onEasterEggDiscovered}
-      />
-      <EasterEgg
-        position={[2.5, 0.3, -1.5]}
-        hiddenObjectType="star"
-        secretMessage="⭐ Cada día contigo es mágico"
-        onDiscovered={onEasterEggDiscovered}
-      />
-      <EasterEgg
-        position={[1.8, 0.4, 2.8]}
-        hiddenObjectType="gift"
-        secretMessage="🎁 Eres el mejor regalo"
-        onDiscovered={onEasterEggDiscovered}
-      />
-      <EasterEgg
-        position={[-2, 0.6, -2.5]}
-        hiddenObjectType="butterfly"
-        secretMessage="🦋 Haces que mi corazón vuele"
-        onDiscovered={onEasterEggDiscovered}
-      />
-      <EasterEgg
-        position={[0, 2.5, 3.5]}
-        hiddenObjectType="heart"
-        secretMessage="💝 Feliz cumpleaños mi amor"
-        onDiscovered={onEasterEggDiscovered}
-      />
+      {/* Hidden interactive elements */}
+      {showEasterEggs && (
+        <>
+          <EasterEgg
+            position={[-2.5, 0.5, 1]}
+            hiddenObjectType="heart"
+            secretMessage="💖 Eres increíble y especial"
+            onDiscovered={onEasterEggDiscovered}
+          />
+          <EasterEgg
+            position={[2.5, 0.3, -1.5]}
+            hiddenObjectType="star"
+            secretMessage="⭐ Cada día contigo es mágico"
+            onDiscovered={onEasterEggDiscovered}
+          />
+          <EasterEgg
+            position={[1.8, 0.4, 2.8]}
+            hiddenObjectType="gift"
+            secretMessage="🎁 Eres el mejor regalo"
+            onDiscovered={onEasterEggDiscovered}
+          />
+          <EasterEgg
+            position={[-2, 0.6, -2.5]}
+            hiddenObjectType="butterfly"
+            secretMessage="🦋 Haces que mi corazón vuele"
+            onDiscovered={onEasterEggDiscovered}
+          />
+          <EasterEgg
+            position={[0, 2.5, 3.5]}
+            hiddenObjectType="heart"
+            secretMessage="💝 Feliz cumpleaños mi amor"
+            onDiscovered={onEasterEggDiscovered}
+          />
+        </>
+      )}
     </>
   );
 }
@@ -623,6 +629,7 @@ export default function App() {
             activeCardId={activeCardId}
             onToggleCard={handleCardToggle}
             onEasterEggDiscovered={handleEasterEggDiscovered}
+            showEasterEggs={hasAnimationCompleted}
           />
           <ambientLight intensity={(1 - environmentProgress) * 0.8} />
           <directionalLight intensity={0.5} position={[2, 10, 0]} color={[1, 0.9, 0.95]}/>
