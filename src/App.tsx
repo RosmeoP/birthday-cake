@@ -62,8 +62,8 @@ const CANDLE_DROP_START =
 const totalAnimationTime = CANDLE_DROP_START + CANDLE_DROP_DURATION;
 
 const ORBIT_TARGET = new Vector3(0, 1, 0);
-const ORBIT_INITIAL_RADIUS = 3;
-const ORBIT_INITIAL_HEIGHT = 1;
+const ORBIT_INITIAL_RADIUS = 5;
+const ORBIT_INITIAL_HEIGHT = 2.5;
 const ORBIT_INITIAL_AZIMUTH = Math.PI / 2;
 const ORBIT_MIN_DISTANCE = 2;
 const ORBIT_MAX_DISTANCE = 8;
@@ -300,6 +300,38 @@ function AnimatedScene({
           rotation={[0, 4.2, 0]}
           scale={0.75}
         />
+        {/* Big center picture frame */}
+        <group>
+          <PictureFrame
+            image="/family.jpg"
+            position={[-3.5, 1.5, 0]}
+            rotation={[0, 4.8, 0]}
+            scale={1.8}
+          />
+          {/* Bright spotlight for the big frame */}
+          <spotLight
+            position={[-3.5, 4, 1.5]}
+            angle={0.4}
+            penumbra={0.3}
+            intensity={8}
+            castShadow
+            target-position={[-3.5, 1.5, 0]}
+            color="#ffffff"
+          />
+          {/* Strong golden glow around frame */}
+          <pointLight
+            position={[-3.5, 1.5, 0.8]}
+            intensity={3}
+            distance={3}
+            color="#ffd700"
+          />
+          <pointLight
+            position={[-3.5, 2.5, 0.5]}
+            intensity={2}
+            distance={2.5}
+            color="#ffaa00"
+          />
+        </group>
         {/* Gift boxes decorations */}
         <GiftBoxes onGiftOpen={onGiftOpen} />
         {cards.map((card) => (

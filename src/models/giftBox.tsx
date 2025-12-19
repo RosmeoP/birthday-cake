@@ -31,7 +31,7 @@ export function GiftBox({
   const [isHovered, setIsHovered] = useState(false);
   const openProgress = useRef(0);
 
-  useCursor(isHovered && !isOpen, "pointer");
+  useCursor(isHovered, "pointer");
 
   useFrame(({ clock }, delta) => {
     if (!groupRef.current) return;
@@ -55,20 +55,16 @@ export function GiftBox({
   const handleClick = useCallback(
     (event: ThreeEvent<MouseEvent>) => {
       event.stopPropagation();
-      if (!isOpen) {
-        setIsOpen(true);
-        onOpen?.(surpriseMessage, surpriseImage);
-      }
+      setIsOpen(true);
+      onOpen?.(surpriseMessage, surpriseImage);
     },
-    [isOpen, onOpen, surpriseMessage, surpriseImage]
+    [onOpen, surpriseMessage, surpriseImage]
   );
 
   const handlePointerOver = useCallback((event: ThreeEvent<PointerEvent>) => {
     event.stopPropagation();
-    if (!isOpen) {
-      setIsHovered(true);
-    }
-  }, [isOpen]);
+    setIsHovered(true);
+  }, []);
 
   const handlePointerOut = useCallback((event: ThreeEvent<PointerEvent>) => {
     event.stopPropagation();
