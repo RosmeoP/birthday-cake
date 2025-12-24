@@ -40,9 +40,12 @@ export function AudioPlayer({ audioSrc, autoPlay = true }: AudioPlayerProps) {
 
     return () => {
       audio.pause();
+      audio.currentTime = 0;
       audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
       audio.removeEventListener("timeupdate", handleTimeUpdate);
       audio.removeEventListener("ended", handleEnded);
+      audio.src = ""; // Release audio resource
+      audioRef.current = null;
     };
   }, [audioSrc, autoPlay]);
 

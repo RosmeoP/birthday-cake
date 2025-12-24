@@ -364,7 +364,7 @@ function AnimatedScene({
             position={[-2, 2.5, 1]}
             hiddenObjectType="heart"
             secretMessage="Escucha esta canción"
-            secretAudio="/birthdayMessage.mp3"
+            secretAudio="/oursong.mp3"
             onDiscovered={onEasterEggDiscovered}
           />
           {/* Star - Right side, more visible (with beach picture) */}
@@ -389,20 +389,6 @@ function AnimatedScene({
                 { text: "9 de Septiembre", isCorrect: false, response: "Fue un poco después..." },
               ],
             }}
-            onDiscovered={onEasterEggDiscovered}
-          />
-          {/* Butterfly - Left back area */}
-          <EasterEgg
-            position={[-2, 0.6, -2.5]}
-            hiddenObjectType="butterfly"
-            secretMessage="Haces que mi corazón vuele"
-            onDiscovered={onEasterEggDiscovered}
-          />
-          {/* Heart - Hidden under the table edge back-left */}
-          <EasterEgg
-            position={[-2.8, 0.2, -3]}
-            hiddenObjectType="heart"
-            secretMessage="Feliz cumpleaños mi amor"
             onDiscovered={onEasterEggDiscovered}
           />
         </>
@@ -623,6 +609,18 @@ export default function App() {
   }, []);
 
   const handleEasterEggDiscovered = useCallback((message: string, image?: string, audio?: string, quiz?: Quiz) => {
+    // Close any open gift popup first
+    setShowGiftMessage(false);
+    setCurrentGiftMessage(null);
+    setCurrentGiftImage(null);
+    setCurrentGiftAudio(null);
+    setCurrentGiftQuiz(null);
+    
+    // Pause background music when opening Easter egg with audio
+    if (audio && backgroundAudioRef.current) {
+      backgroundAudioRef.current.pause();
+    }
+    
     setDiscoveredMessages((prev) => {
       // Only add if not already discovered
       if (!prev.includes(message)) {
@@ -638,6 +636,18 @@ export default function App() {
   }, []);
 
   const handleGiftOpen = useCallback((message?: string, image?: string, audio?: string, quiz?: Quiz) => {
+    // Close any open Easter egg popup first
+    setShowEasterEggMessage(false);
+    setCurrentEasterEggMessage(null);
+    setCurrentEasterEggImage(null);
+    setCurrentEasterEggAudio(null);
+    setCurrentEasterEggQuiz(null);
+    
+    // Pause background music when opening gift with audio
+    if (audio && backgroundAudioRef.current) {
+      backgroundAudioRef.current.pause();
+    }
+    
     if (message) {
       setCurrentGiftMessage(message);
     }
@@ -741,7 +751,7 @@ export default function App() {
       )}
       {discoveredMessages.length > 0 && (
         <div className="easter-egg-counter">
-          Secretos encontrados: {discoveredMessages.length}/5
+          Secretos encontrados: {discoveredMessages.length}/3
         </div>
       )}
       <Canvas
