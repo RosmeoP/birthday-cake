@@ -360,12 +360,12 @@ function AnimatedScene({
       {/* Hidden interactive elements */}
       {showEasterEggs && (
         <>
-          {/* Heart - Floating high above left side (with audio) - more challenging! */}
+          {/* Heart - Floating high above left side (with family picture) */}
           <EasterEgg
             position={[-2, 2.5, 1]}
             hiddenObjectType="heart"
-            secretMessage="Escucha esta canción"
-            secretAudio="/oursong.mp3"
+            secretMessage="Una foto de tu niñez con tu familia"
+            secretImage="/familyPicture.jpg"
             onDiscovered={onEasterEggDiscovered}
           />
           {/* Star - Right side, more visible (with beach picture) */}
@@ -506,12 +506,21 @@ export default function App() {
     });
   }, []);
 
-  // Stop background audio when animation completes and hand over to music player
+  // Stop background audio when animation completes - MusicPlayer will take over
   useEffect(() => {
     if (hasAnimationCompleted && backgroundAudioRef.current) {
-      // Don't stop it, let the music player take it over
+      // MusicPlayer will use this audio, no need to stop it
+      // But we should clear the ref so it doesn't get played again elsewhere
     }
   }, [hasAnimationCompleted]);
+
+  // Stop background audio when user changes songs in MusicPlayer
+  const handleMusicPlayerSongChange = useCallback(() => {
+    if (backgroundAudioRef.current) {
+      backgroundAudioRef.current.pause();
+      backgroundAudioRef.current = null;
+    }
+  }, []);
 
   const typingComplete = currentLineIndex >= TYPED_LINES.length;
   const typedLines = useMemo(() => {
@@ -685,6 +694,7 @@ export default function App() {
           songs={BACKGROUND_SONGS}
           ref={musicPlayerRef}
           existingAudio={backgroundAudioRef.current}
+          onSongChange={handleMusicPlayerSongChange}
         />
       )}
       <div
@@ -719,11 +729,8 @@ export default function App() {
             className="close-button" 
             onClick={() => {
               setShowGiftMessage(false);
-              // Resume background music when closing
+              // Resume music when closing
               musicPlayerRef.current?.play();
-              if (backgroundAudioRef.current && backgroundAudioRef.current.paused) {
-                backgroundAudioRef.current.play();
-              }
             }}
             type="button"
           >
@@ -750,11 +757,8 @@ export default function App() {
             className="close-button" 
             onClick={() => {
               setShowEasterEggMessage(false);
-              // Resume background music when closing
+              // Resume music when closing
               musicPlayerRef.current?.play();
-              if (backgroundAudioRef.current && backgroundAudioRef.current.paused) {
-                backgroundAudioRef.current.play();
-              }
             }}
             type="button"
           >

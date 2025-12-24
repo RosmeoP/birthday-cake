@@ -2,7 +2,7 @@ import { useCallback, useEffect, useImperativeHandle, useRef, useState, forwardR
 
 type MusicPlayerProps = {
   songs: string[];
-  onSongChange?: (index: number) => void;
+  onSongChange?: () => void;
   existingAudio?: HTMLAudioElement | null;
 };
 
@@ -12,52 +12,20 @@ export type MusicPlayerHandle = {
 };
 
 export const MusicPlayer = forwardRef<MusicPlayerHandle, MusicPlayerProps>(
-  ({ songs, existingAudio }, ref) => {
+  ({ songs, existingAudio, onSongChange }, ref) => {
     const [currentSongIndex, setCurrentSongIndex] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
     const audioRef = useRef<HTMLAudioElement | null>(null);
-    const lastSongIndexRef = useRef(-1);
+    const hasInitialized = useRef(false);
 
-    // Initialize with existing audio ONCE on mount
+    // Initialize with existing audio ONCE on mount - no manipulation
     useEffect(() => {
-      if (existingAudio && lastSongIndexRef.current === -1) {
+      if (!hasInitialized.current && existingAudio) {
         audioRef.current = existingAudio;
-        existingAudio.loop = true;
         setIsPlaying(!existingAudio.paused);
-        lastSongIndexRef.current = 0;
+        hasInitialized.current = true;
       }
     }, [existingAudio]);
-
-    // Handle song changes - only when index actually changes
-    useEffect(() => {
-      // Skip if this is the same song or initial mount
-      if (lastSongIndexRef.current === currentSongIndex) {
-        return;
-      }
-      
-      // Skip first render (handled by existingAudio effect)
-      if (lastSongIndexRef.current === -1) {
-        return;
-      }
-
-      // Pause current audio
-      if (audioRef.current) {
-        audioRef.current.pause();
-      }
-
-      // Create and play new audio
-      const audio = new Audio(songs[currentSongIndex]);
-      audio.loop = true;
-      audio.currentTime = 0; // Start from beginning
-      audioRef.current = audio;
-      lastSongIndexRef.current = currentSongIndex;
-      
-      audio.play()
-        .then(() => setIsPlaying(true))
-        .catch(() => setIsPlaying(false));
-
-      // No cleanup - we handle pausing manually when changing songs
-    }, [currentSongIndex, songs]);
 
     const play = useCallback(() => {
       const audio = audioRef.current;
@@ -82,12 +50,40 @@ export const MusicPlayer = forwardRef<MusicPlayerHandle, MusicPlayerProps>(
     }), [play, pause]);
 
     const nextSong = useCallback(() => {
-      setCurrentSongIndex((current) => (current + 1) % songs.length);
-    }, [songs.length]);
+      // Stop current audio
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+      onSongChange?.();
+      
+      const newIndex = (currentSongIndex + 1) % songs.length;
+      const audio = new Audio(songs[newIndex]);
+      audio.loop = true;
+      audioRef.current = audio;
+      setCurrentSongIndex(newIndex);
+      
+      audio.play()
+        .then(() => setIsPlaying(true))
+        .catch(() => setIsPlaying(false));
+    }, [currentSongIndex, songs, onSongChange]);
 
     const prevSong = useCallback(() => {
-      setCurrentSongIndex((current) => (current - 1 + songs.length) % songs.length);
-    }, [songs.length]);
+      // Stop current audio
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+      onSongChange?.();
+      
+      const newIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+      const audio = new Audio(songs[newIndex]);
+      audio.loop = true;
+      audioRef.current = audio;
+      setCurrentSongIndex(newIndex);
+      
+      audio.play()
+        .then(() => setIsPlaying(true))
+        .catch(() => setIsPlaying(false));
+    }, [currentSongIndex, songs, onSongChange]);
 
     const togglePlay = useCallback(() => {
       if (isPlaying) {
