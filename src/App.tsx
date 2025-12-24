@@ -21,6 +21,7 @@ import { EasterEgg } from "./components/EasterEgg";
 import { GiftBoxes } from "./components/GiftBoxes";
 import { AudioPlayer } from "./components/AudioPlayer";
 import { QuizComponent } from "./components/QuizComponent";
+import { MusicPlayer, type MusicPlayerHandle } from "./components/MusicPlayer";
 
 import "./App.css";
 
@@ -475,7 +476,10 @@ export default function App() {
   const [currentGiftImage, setCurrentGiftImage] = useState<string | null>(null);
   const [currentGiftAudio, setCurrentGiftAudio] = useState<string | null>(null);
   const [currentGiftQuiz, setCurrentGiftQuiz] = useState<Quiz | null>(null);
+  const musicPlayerRef = useRef<MusicPlayerHandle>(null);
   const backgroundAudioRef = useRef<HTMLAudioElement | null>(null);
+  
+  const BACKGROUND_SONGS = ["/music.mp3", "/oursong.mp3", "/song2.mp3", "/song3.mp3"];
 
   useEffect(() => {
     const audio = new Audio("/music.mp3");
@@ -501,6 +505,13 @@ export default function App() {
       // ignore play errors (browser might block)
     });
   }, []);
+
+  // Stop background audio when animation completes and hand over to music player
+  useEffect(() => {
+    if (hasAnimationCompleted && backgroundAudioRef.current) {
+      // Don't stop it, let the music player take it over
+    }
+  }, [hasAnimationCompleted]);
 
   const typingComplete = currentLineIndex >= TYPED_LINES.length;
   const typedLines = useMemo(() => {
@@ -617,8 +628,9 @@ export default function App() {
     setCurrentGiftQuiz(null);
     
     // Pause background music when opening Easter egg with audio
-    if (audio && backgroundAudioRef.current) {
-      backgroundAudioRef.current.pause();
+    if (audio) {
+      musicPlayerRef.current?.pause();
+      backgroundAudioRef.current?.pause();
     }
     
     setDiscoveredMessages((prev) => {
@@ -644,8 +656,9 @@ export default function App() {
     setCurrentEasterEggQuiz(null);
     
     // Pause background music when opening gift with audio
-    if (audio && backgroundAudioRef.current) {
-      backgroundAudioRef.current.pause();
+    if (audio) {
+      musicPlayerRef.current?.pause();
+      backgroundAudioRef.current?.pause();
     }
     
     if (message) {
@@ -667,6 +680,13 @@ export default function App() {
 
   return (
     <div className="App">
+      {hasAnimationCompleted && (
+        <MusicPlayer 
+          songs={BACKGROUND_SONGS}
+          ref={musicPlayerRef}
+          existingAudio={backgroundAudioRef.current}
+        />
+      )}
       <div
         className="background-overlay"
         style={{ opacity: backgroundOpacity }}
@@ -697,7 +717,14 @@ export default function App() {
         <div className="gift-message-popup">
           <button 
             className="close-button" 
-            onClick={() => setShowGiftMessage(false)}
+            onClick={() => {
+              setShowGiftMessage(false);
+              // Resume background music when closing
+              musicPlayerRef.current?.play();
+              if (backgroundAudioRef.current && backgroundAudioRef.current.paused) {
+                backgroundAudioRef.current.play();
+              }
+            }}
             type="button"
           >
             ✕
@@ -721,7 +748,14 @@ export default function App() {
         <div className="easter-egg-message">
           <button 
             className="close-button" 
-            onClick={() => setShowEasterEggMessage(false)}
+            onClick={() => {
+              setShowEasterEggMessage(false);
+              // Resume background music when closing
+              musicPlayerRef.current?.play();
+              if (backgroundAudioRef.current && backgroundAudioRef.current.paused) {
+                backgroundAudioRef.current.play();
+              }
+            }}
             type="button"
           >
             ✕
