@@ -10,7 +10,7 @@ import {
 } from "react";
 import type { Group } from "three";
 import { Vector3 } from "three";
-import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
+import type { OrbitControls as OrbitControlsImpl } from "three/examples/jsm/controls/OrbitControls.js";
 import { Candle } from "./models/candle";
 import { Cake } from "./models/cake";
 import { Table } from "./models/table";
@@ -631,9 +631,9 @@ export default function App() {
   const handleEasterEggDiscovered = useCallback((message: string, image?: string, audio?: string, quiz?: Quiz) => {
     // Close any open gift popup first
     setShowGiftMessage(false);
-    setCurrentGiftMessage(null);
-    setCurrentGiftImage(null);
-    setCurrentGiftAudio(null);
+    setCurrentGiftMessage("");
+    setCurrentGiftImage("");
+    setCurrentGiftAudio("");
     setCurrentGiftQuiz(null);
     
     // Pause background music when opening Easter egg with audio
@@ -659,9 +659,9 @@ export default function App() {
   const handleGiftOpen = useCallback((message?: string, image?: string, audio?: string, quiz?: Quiz) => {
     // Close any open Easter egg popup first
     setShowEasterEggMessage(false);
-    setCurrentEasterEggMessage(null);
-    setCurrentEasterEggImage(null);
-    setCurrentEasterEggAudio(null);
+    setCurrentEasterEggMessage("");
+    setCurrentEasterEggImage("");
+    setCurrentEasterEggAudio("");
     setCurrentEasterEggQuiz(null);
     
     // Pause background music when opening gift with audio
