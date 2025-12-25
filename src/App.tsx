@@ -10,7 +10,7 @@ import {
 } from "react";
 import type { Group } from "three";
 import { Vector3 } from "three";
-import type { OrbitControls as OrbitControlsImpl } from "three/examples/jsm/controls/OrbitControls.js";
+import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { Candle } from "./models/candle";
 import { Cake } from "./models/cake";
 import { Table } from "./models/table";
